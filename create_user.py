@@ -1,8 +1,18 @@
 from tkinter import *
 import qrcode
-
+import json
 import random
 import MySQLdb
+
+txt = json.loads()
+
+iphost = txt["iphost"]
+
+hostname = txt["hostname"]
+
+password = txt["password"]
+
+database = txt["database name"]
 
 vr=0
 
@@ -24,7 +34,7 @@ def lettre():   #creer le qrcode
 
     f = "%s%s" % (f, b)
 
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
     cursor = connection.cursor()
 
@@ -59,7 +69,7 @@ def id():       #créer un id unique
 
     f = "%s%s" % (f, b)
 
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
     cursor = connection.cursor()
 
@@ -80,7 +90,7 @@ def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
 
     mailverif()
     
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
     cursor = connection.cursor()    #recuperation des entrée
     b= lettre()
@@ -143,7 +153,7 @@ def mailverif():  #verif que le mail n'existe pas et que le client n'a pas été
 
     k = "%s%s" % (k, e)
 
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
     cursor = connection.cursor()
     cursor.execute(k)
@@ -173,7 +183,7 @@ def save():     # enrigstre le qrcode dans un dossier (nom de l'image compose du
     k = "%s%s" % (k, e)
 
     
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
     cursor = connection.cursor()
 
@@ -209,7 +219,7 @@ def save():     # enrigstre le qrcode dans un dossier (nom de l'image compose du
 
     img = qr.make_image(fill_color="black", back_color="#FFD800")
 
-    k='/home/pi/qrcode_porte/qrcode_list/'
+    k='qrcode_list/'
 
     k = "%s%s" % (k,a)
     k = "%s%s" % (k,c)

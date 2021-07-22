@@ -1,11 +1,21 @@
 from tkinter import *
-
+import json
 import random
 import MySQLdb
 from datetime import *
 
+txt = json.loads()
 
-global a
+iphost = txt["iphost"]
+
+hostname = txt["hostname"]
+
+password = txt["password"]
+
+database = txt["database name"]
+
+
+a = 0
 
 
 def refachat():   #creer une ref pour l'achat (annee, mois, jours, random number de 4 chiffres
@@ -49,7 +59,7 @@ def verif():
 
     print(k)
     
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
     cursor = connection.cursor()
 
@@ -105,7 +115,7 @@ def id():       # recuper l'id
 
     
     
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
     cursor = connection.cursor()
 
@@ -129,7 +139,7 @@ def achat():        # ajoute la ligne de l'achat avec le nb de visit , la ref de
     global id_client
 
     global a
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
     cursor = connection.cursor()
 
@@ -192,7 +202,7 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
 
     print(k)
     
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
     cursor = connection.cursor()
 
@@ -228,7 +238,7 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
         k = "%s%s" % (k, al)
 
 
-        connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+        connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
         cursor = connection.cursor()
 
@@ -274,7 +284,7 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
 
         print(k)
 
-        connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+        connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
         cursor = connection.cursor()
 

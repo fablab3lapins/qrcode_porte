@@ -1,12 +1,21 @@
-import re
 import cv2
 from time import sleep
 from picamera import PiCamera
 from tkinter import *
-import random
+import json
 import MySQLdb
 from datetime import *
 import RPi.GPIO as GPIO
+
+txt = json.loads()
+
+iphost = txt["iphost"]
+
+hostname = txt["hostname"]
+
+password = txt["password"]
+
+database = txt["database name"]
 
 
 
