@@ -6,7 +6,6 @@ import db
 ref = 0
 
 def refachat():   #creer une ref pour l'achat (annee, mois, jours, random number de 4 chiffres
-    global ref
     heure = datetime.today().strftime('%H:%M')
 
     date = datetime.today().strftime('%Y-%m-%d')
@@ -22,11 +21,10 @@ def refachat():   #creer une ref pour l'achat (annee, mois, jours, random number
 
     ref = "%s%s" % (date, ref)
 
-    verif()
+    verif(ref)
 
 
-def verif():
-    global ref
+def verif(ref):
 
     sql ="SELECT * FROM achat WHERE ref_achat ='"      #creer la commande sql
 
@@ -45,8 +43,9 @@ def verif():
 
     if (recep == None):
         print('j\'ai pas celui la')
-        id()
-        achat()
+        id_client = id()
+        achat(id_client, ref)
+
         
     else :
         print( ' got it ')
@@ -54,7 +53,6 @@ def verif():
 
 
 def id():       # recuper l'id
-    global id_client
 
     sql ="SELECT * FROM client WHERE ( nom='"
 
@@ -78,12 +76,10 @@ def id():       # recuper l'id
 
     print(id_client)
 
+    return id_client
 
+def achat(id_client, ref):        # ajoute la ligne de l'achat avec le nb de visit , la ref de l'achat, l'id et le lieu
 
-def achat():        # ajoute la ligne de l'achat avec le nb de visit , la ref de l'achat, l'id et le lieu
-    global id_client
-
-    global ref
 
     date = datetime.today().strftime('%Y-%m-%d')
 
@@ -99,13 +95,13 @@ def achat():        # ajoute la ligne de l'achat avec le nb de visit , la ref de
     db.execute(sql)
 
 
-    upcount()
+    upcount(id_client)
 
 
 
 
-def upcount():      # met a jour si le client a deja effectuer un achat dans le lieu sinon créer la ligne
-    global id_client
+def upcount(id_client):      # met a jour si le client a deja effectuer un achat dans le lieu sinon créer la ligne
+
 
     
     sql = "SELECT * FROM count WHERE id_client='"

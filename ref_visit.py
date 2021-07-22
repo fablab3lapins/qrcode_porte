@@ -35,7 +35,6 @@ def scan(): #scan le qrcode en enregistre la valeur lu
     detector = cv2.QRCodeDetector()
     swpr = False
 
-    global data
     while True:   
         
         data, box, _ = detector.detectAndDecode(img)
@@ -53,13 +52,12 @@ def scan(): #scan le qrcode en enregistre la valeur lu
         cv2.imshow("code detector" , img)
         sleep(0.1)
         cv2.destroyAllWindows()
-        test()
+        test(data, id_client)
         break
 
 
-def test():     # regarde si le qrcode existe
-    global data
-    global id_client
+def test(data, id_client):     # regarde si le qrcode existe
+
     
     auxdata = data
 
@@ -86,13 +84,11 @@ def test():     # regarde si le qrcode existe
 
     else :
         print( ' got it ')
-        change()
+        change(data, id_client)
 
 
 
-def change():       # regarde si le client peut entrée et si oui diminue de 1 le nombre d'entrée
-    global data
-    global id_client
+def change(data, id_client):       # regarde si le client peut entrée et si oui diminue de 1 le nombre d'entrée
 
     auxid = id_client
 
@@ -144,15 +140,13 @@ def change():       # regarde si le client peut entrée et si oui diminue de 1 l
 
         print(sql)
 
-        addref()
+        addref(id_client)
 
     db.execute(sql)
 
 
 
-def addref():       #reference la visite 
-    global id_client
-
+def addref(id_client):       #reference la visite
 
     heure = datetime.today().strftime('%H:%M')
 

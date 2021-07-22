@@ -3,9 +3,7 @@ import qrcode
 import random
 import db
 
-
-varVerif=0
-
+check=0
 
 def lettre():   #creer le qrcode    
     nbChar = random.randint(4,13)
@@ -59,14 +57,14 @@ def id():       #créer un id unique
     
 
 
-def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
-    global varVerif
+def edit(check):   # ajoute un ligne avec les coordonnées de l'utilisateur
 
-    mailverif()
+
+    mailverif(check)
     
     new_user = (id(),nom.get(),prenom.get(),mail.get(),tel.get(),adresse.get(),lettre())
 
-    if (varVerif == 1):
+    if (check == 1):
         sql = "INSERT INTO client"        #création de la commande sql
 
         sql = "%s%s" % (sql, " (id_client, nom, prenom, mail, telephone, adresse,  qr_code) VALUES ")
@@ -95,13 +93,11 @@ def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
         win.mainloop()
 
 
-    if (varVerif == 1):
+    if (check == 1):
         save()
 
-def mailverif():  #verif que le mail n'existe pas et que le client n'a pas été créer
-    global varVerif
-
-
+def mailverif(check):  #verif que le mail n'existe pas et que le client n'a pas été créer
+    
     sql ="SELECT * FROM client WHERE mail='"
 
     sql = "%s%s" % (sql ,mail.get())
@@ -110,13 +106,11 @@ def mailverif():  #verif que le mail n'existe pas et que le client n'a pas été
 
     result = db.fetchone(sql)
     print(sql)
-    
-
 
     if (result == None):
-        varVerif = 1
+        check = 1
     else:
-        varVerif = 0
+        check = 0
 
 
 def save():     # enrigstre le qrcode dans un dossier (nom de l'image compose du nom prenom et id)
@@ -198,7 +192,7 @@ label5.pack(side=TOP)
 adresse = Entry(win, width=45)
 adresse.pack(expand=YES)
 
-but = Button(win, text='créer utilisateur', font=('Courrier', 20), bg='#00ffe0', command=edit)
+but = Button(win, text='créer utilisateur', font=('Courrier', 20), bg='#00ffe0', command=edit(check))
 but.pack(expand=YES)
 
 win.mainloop()
