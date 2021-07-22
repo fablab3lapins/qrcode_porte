@@ -4,33 +4,31 @@ import random
 import db
 
 
-vr=0
+varVerif=0
 
 
 def lettre():   #creer le qrcode    
-    a = random.randint(4,13)
-    k =""
-    for i in range(a):
-        b = random.randint(97, 122)
-        b = chr(b)
-        k = "%s%s" % (k, b)
+    nbChar = random.randint(4,13)
+    qr_code =""
+    for i in range(nbChar):
+        aux = random.randint(97, 122)
+        aux = chr(aux)
+        qr_code = "%s%s" % (qr_code, aux)
 
 
-    f = "SELECT * FROM client WHERE qrcode ='"  #verif que le qrcode est unique
+    sqlStr = "SELECT * FROM client WHERE qrcode ='"  #verif que le qrcode est unique
 
-    f = "%s%s" % (f, a)
+    sqlStr = "%s%s" % (sqlStr, qr_code)
 
-    b ="'"
-
-    f = "%s%s" % (f, b)
+    sqlStr = "%s%s" % (sqlStr, "'")
 
 
 
 
-    m = db.fetchone(f)  # recup la ligne si elle existe sinon none
+    recep = db.fetchone(sqlStr)  # recup la ligne si elle existe sinon none
 
-    if (m!= None):
-        return k
+    if (recep != None):
+        return qr_code
     else:
         lettre()
     
@@ -41,29 +39,27 @@ def id():       #créer un id unique
 
     b, c= chr(b), chr(c)        
 
-    a = "%s%s" % (a, d)
-    a = "%s%s" % (a, e)
-    a = "%s%s" % (a, f)
-    a = "%s%s" % (a, b)
+    id_client = "%s%s" % (a, d)
+    id_client = "%s%s" % (id_client, e)
+    id_client = "%s%s" % (id_client, f)
+    id_client = "%s%s" % (id_client, b)
 
-    a = "%s%s" % (a, c)
+    id_client = "%s%s" % (id_client, c)
 
-    f = "SELECT * FROM client WHERE id_client ='"  #verif que l'id est unique
+    sqlStr = "SELECT * FROM client WHERE id_client ='"  #verif que l'id est unique
 
-    f = "%s%s" % (f, a)
+    sqlStr = "%s%s" % (sqlStr, id_client)
 
-    b ="'"
-
-    f = "%s%s" % (f, b)
+    sqlStr = "%s%s" % (sqlStr, "'")
 
 
 
 
 
-    m = db.fetchone(f)
+    recep = db.fetchone(sqlStr)
 
-    if (m!= None):
-        return a
+    if (recep != None):
+        return id_client
     else:
         id()
 
@@ -71,33 +67,21 @@ def id():       #créer un id unique
 
 
 def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
-    global vr
+    global varVerif
 
     mailverif()
     
+    new_user = (id(),nom.get(),prenom.get(),mail.get(),tel.get(),adresse.get(),lettre())
 
-    b= lettre()
-    a = nom.get()
-    c = mail.get()
-    d = prenom.get()
-    e = adresse.get()
-    f = tel.get()
-    g = id()
-    
+    if (varVerif == 1):
+        sqlStr = "INSERT INTO client"        #création de la commande sql
 
-    
-    new_user = (g,a,d,c,f,e,b)
-    if (vr == 1):
-        k = "INSERT INTO client"        #création de la commande sql
+        sqlStr = "%s%s" % (sqlStr, " (id_client, nom, prenom, mail, telephone, adresse,  qr_code) VALUES ")
 
-        e = " (id_client, nom, prenom, mail, telephone, adresse,  qr_code) VALUES "
+        sqlStr = "%s%s" % (sqlStr, new_user)
 
-        k = "%s%s" % (k, e)
-
-        k = "%s%s" % (k, new_user)
-
-        print(k)
-        db.execute(k)
+        print(sqlStr)
+        db.execute(sqlStr)
 
         
 
@@ -118,100 +102,85 @@ def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
         win.mainloop()
 
 
-    if (vr == 1):
+    if (varVerif == 1):
         save()
 
 def mailverif():  #verif que le mail n'existe pas et que le client n'a pas été créer
-    global vr
+    global varVerif
 
-    a = mail.get()
-    k="SELECT * FROM client WHERE mail='"
 
-    k = "%s%s" % (k,a)
+    sqlStr ="SELECT * FROM client WHERE mail='"
 
-    e = "'"
+    sqlStr = "%s%s" % (sqlStr ,mail.get())
 
-    k = "%s%s" % (k, e)
+    sqlStr = "%s%s" % (sqlStr, "'")
 
 
 
 
-    b = db.fetchone(k)
-    print(k)
+    recep = db.fetchone(sqlStr)
+    print(sqlStr)
     
 
 
-    if (b == None):
-        vr = 1
+    if (recep == None):
+        varVerif = 1
     else:
-        vr = 0
+        varVerif = 0
 
 
 def save():     # enrigstre le qrcode dans un dossier (nom de l'image compose du nom prenom et id)
 
-    a = mail.get()
-    k="SELECT * FROM client WHERE mail='"
+    sqlStr ="SELECT * FROM client WHERE mail='"
 
-    k = "%s%s" % (k,a)
+    sqlStr = "%s%s" % (sqlStr ,mail.get())
 
-    e = "'"
-
-    k = "%s%s" % (k, e)
+    sqlStr = "%s%s" % (sqlStr, "'")
 
     
 
 
-    b = db.fetchone(k)
+    recep = db.fetchone(sqlStr)
 
-    print(b)
+    print(recep)
 
-    a = b[1]
+    name = recep[1]
 
-    c = b[2]
+    surname = recep[2]
 
-    i = b[0]
+    id_user = recep[0]
 
-    q = b[6]
-    
-    
-
-    
-
-
+    qr_code = recep[6]
 
     qr = qrcode.QRCode(version=3, error_correction=qrcode.constants.ERROR_CORRECT_L,
                        box_size=10, border=4)
 
 
-    qr.add_data(q)
+    qr.add_data(qr_code)
 
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="#FFD800")
 
-    k='qrcode_list/'
+    imgq='qrcode_list/'
 
-    k = "%s%s" % (k,a)
-    k = "%s%s" % (k,c)
-    k = "%s%s" % (k,i)
+    imgq = "%s%s" % (imgq,name)
+    imgq = "%s%s" % (imgq,surname)
+    imgq = "%s%s" % (imgq,id_user)
 
-    r = ".png"
-
-    k = "%s%s" % (k,r)
+    imgq = "%s%s" % (imgq,".png")
 
     
 
     
 
-    img.save(k)
+    img.save(imgq)
                        
 
-        
-    
 
 win = Tk()
 
-win.title("La tirelire magique ")
+win.title("creer un utilisateur")
 win.geometry("800x600")
 win.config(background='#00ffe0')
 

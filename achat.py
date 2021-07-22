@@ -5,29 +5,25 @@ import db
 
 
 
-a = 0
+ref = 0
 
 
 
 def refachat():   #creer une ref pour l'achat (annee, mois, jours, random number de 4 chiffres
-
-    global a
-
-    
+    global ref
     heure = datetime.today().strftime('%H:%M')
 
     date = datetime.today().strftime('%Y-%m-%d')
     
     a, d ,e, f = random.randint(0, 9), random.randint(0, 9) , random.randint(0, 9),random.randint(0, 9)
 
-    a = "%s%s" % (a, d)
-    a = "%s%s" % (a, e)
-    a = "%s%s" % (a, f)
+    ref = "%s%s" % (a, d)
+    ref = "%s%s" % (ref, e)
+    ref = "%s%s" % (ref, f)
 
-    b= "-"
-    a = "%s%s" % ( b, a)
+    ref = "%s%s" % ( "-", ref)
 
-    a = "%s%s" % (date, a)
+    ref = "%s%s" % (date, ref)
 
     verif()
 
@@ -36,28 +32,27 @@ def refachat():   #creer une ref pour l'achat (annee, mois, jours, random number
 
 
 def verif():
-    global a
+    global ref
 
     
 
-    k="SELECT * FROM achat WHERE ref_achat ='"      #creer la commande sql 
+    sqlStr ="SELECT * FROM achat WHERE ref_achat ='"      #creer la commande sql
 
-    k = "%s%s" % (k, a)
-
-    v = "'"
-    
-    k = "%s%s" % (k, v)
-
-    print(k)
-    
+    sqlStr = "%s%s" % (sqlStr, ref)
 
 
-    b = db.fetchone(k) #recup la ligne si elle existe sinon recup none
+    sqlStr = "%s%s" % (sqlStr, "'")
 
-    print(b)
+    print(sqlStr)
     
 
-    if (b == None):
+
+    recep = db.fetchone(sqlStr) #recup la ligne si elle existe sinon recup none
+
+    print(recep)
+    
+
+    if (recep == None):
         print('j\'ai pas celui la')
         id()
         achat()
@@ -70,43 +65,31 @@ def verif():
 
 def id():       # recuper l'id
     global id_client
-    
-    nm = nom.get()
 
-    pm= prenom.get()
+    sqlStr ="SELECT * FROM client WHERE ( nom='"
 
-    
+    sqlStr = "%s%s" % (sqlStr, nom.get())
 
-    k="SELECT * FROM client WHERE ( nom='"
+    sqlStr = "%s%s" % (sqlStr, "'")
 
-    k = "%s%s" % (k, nm)
+    sqlStr = "%s%s" % (sqlStr, " AND prenom='")
 
-    v = "'"
+    sqlStr = "%s%s" % (sqlStr, prenom.get())
 
-    g = " AND prenom='"
+    sqlStr = "%s%s" % (sqlStr, "')")
 
-    w = "')"
-
-    k = "%s%s" % (k, v)
-
-    k = "%s%s" % (k, g)
-
-    k = "%s%s" % (k, pm)
-
-    k = "%s%s" % (k, w)
-
-    print(k)
+    print(sqlStr)
     
 
     
     
 
 
-    b = db.fetchone(k)
+    recep = db.fetchone(sqlStr)
 
-    print(b)
+    print(recep)
 
-    id_client = b[0]
+    id_client = recep[0]
 
     print(id_client)
 
@@ -117,31 +100,20 @@ def id():       # recuper l'id
 def achat():        # ajoute la ligne de l'achat avec le nb de visit , la ref de l'achat, l'id et le lieu
     global id_client
 
-    global a
-
-
-    nbvis = int(nb.get())
-
-    li = lieu.get()
-
-    
+    global ref
 
     date = datetime.today().strftime('%Y-%m-%d')
-    
 
+    column = (int(nb.get()), ref, id_client, lieu.get())
 
-    al = (nbvis, a, id_client, li)
+    sqtStr  = "INSERT INTO achat"
 
-    k = "INSERT INTO achat"
+    sqtStr = "%s%s" % (sqtStr, " (nb_visit_achat, ref_achat, id_client, lieu) VALUES ")
 
-    e = " (nb_visit_achat, ref_achat, id_client, lieu) VALUES "
+    sqtStr = "%s%s" % (sqtStr, column)
 
-    k = "%s%s" % (k, e)
-
-    k = "%s%s" % (k, al)
-
-    print(k)
-    db.execute(k)
+    print(sqtStr)
+    db.execute(sqtStr)
 
 
     upcount()
@@ -153,97 +125,71 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
     global id_client
 
     
-    k="SELECT * FROM count WHERE id_client='"
+    sqlStr ="SELECT * FROM count WHERE id_client='"
 
-    k = "%s%s" % (k, id_client)
+    sqlStr = "%s%s" % (sqlStr, id_client)
 
-    v = "'"
+    sqlStr = "%s%s" % (sqlStr, "'")
 
-    g = " AND lieu='"
-    
-    k = "%s%s" % (k, v)
+    sqlStr = "%s%s" % (sqlStr, " AND lieu='")
 
-    k = "%s%s" % (k, g)
+    sqlStr = "%s%s" % (sqlStr,lieu.get())
 
-    li = lieu.get()
+    sqlStr = "%s%s" % (sqlStr, "'")
 
-    k = "%s%s" % (k, li)
+    print(sqlStr)
 
-    k = "%s%s" % (k, v)
+    recep = db.fetchone(sqlStr)
 
-    
-
-    
-
-    print(k)
-
-    b = db.fetchone(k)
-
-    if (b == None):
-        truc = 0
+    if (recep == None):
+        pass
     else :
-        c = b[0]
+        nbvisit = recep[0]
 
 
 
-    if (b == None):
+    if (recep == None):
         print('j\'ai pas celui la')
 
-        nbvis = nb.get()
 
-        li = lieu.get()
+        column = (nb.get(), id_client, lieu.get())
 
-        al = (nbvis, id_client, li)
+        sqlStr = "INSERT INTO count"
 
-        k = "INSERT INTO count"
+        sqlStr = "%s%s" % (sqlStr, " (nb_visit, id_client, lieu) VALUES ")
 
-        e = " (nb_visit, id_client, lieu) VALUES "
+        sqlStr = "%s%s" % (sqlStr, column)
 
-        k = "%s%s" % (k, e)
+        db.execute(sqlStr)
 
-        k = "%s%s" % (k, al)
-
-
-        db.execute(k)
-
-
-            
-        
-    else :
+    else:
         print( ' got it ')
 
 
-        nbvis= int(nb.get()) + c
-        v = "'"
+        nbvis= int(nb.get()) + nbvisit
 
-        k = " UPDATE count SET nb_visit = "
+        sqlStr = " UPDATE count SET nb_visit = "
 
-        k = "%s%s" % (k, nbvis)
+        sqlStr = "%s%s" % (sqlStr, nbvis)
         
 
-        x = " WHERE id_client ='"
+        x =
 
-        k = "%s%s" % (k, x)
+        sqlStr = "%s%s" % (sqlStr, " WHERE id_client ='")
 
-        k = "%s%s" % (k, id_client)
-
+        sqlStr = "%s%s" % (sqlStr, id_client)
         
+        sqlStr = "%s%s" % (sqlStr, "'")
 
-        g = " AND lieu='"
-        
-        k = "%s%s" % (k, v)
+        sqlStr = "%s%s" % (sqlStr, " AND lieu='")
 
-        k = "%s%s" % (k, g)
+        sqlStr = "%s%s" % (sqlStr, lieu.get())
 
-        li = lieu.get()
+        sqlStr = "%s%s" % (sqlStr, "'")
 
-        k = "%s%s" % (k, li)
+        print(sqlStr)
 
-        k = "%s%s" % (k, v)
-
-        print(k)
-
-        db.execute(k)
+        db.execute(sqlStr)
 
 
 
@@ -256,23 +202,9 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
 
     win.mainloop()
 
-        
-
-
-            
-
-
-        
-
-    
-
-
-
-
-
 win = Tk()
 
-win.title("La tirelire magique ")
+win.title("faire un achat")
 win.geometry("800x600")
 win.config(background='#00ffe0')
 

@@ -67,41 +67,35 @@ def scan(): #scan le qrcode en enregistre la valeur lu
         if cv2.waitKey(1) == ord("q"):
             break
 
-    
-
-
-
 
 
 def test():     # regarde si le qrcode existe
     global data
     global id_client
     
-    a = data
-    print(a)
+    auxdata = data
 
-    k="SELECT * FROM client WHERE ( qr_code='"  # creation de la commande sql
+    sqlStr="SELECT * FROM client WHERE ( qr_code='"  # creation de la commande sql
 
-    k = "%s%s" % (k, a)
+    sqlStr = "%s%s" % (sqlStr, auxdata)
 
-    v = "')"
+    sqlStr = "%s%s" % (sqlStr, "')")
 
-    k = "%s%s" % (k, v)
+    print(sqlStr)
 
-    print(k)
     
 
 
-    b = db.fetchone(k)
+    recep = db.fetchone(sqlStr)
 
-    print(b)
+    print(recep)
 
-    id_client = b[0] #recup la premieere colonne de la ligne
+    id_client = recep[0] #recup la premieere colonne de la ligne
 
     print(id_client)
     
 
-    if (b == None):
+    if (recep == None):
         print('j\'ai pas celui la')
         
         
@@ -118,24 +112,24 @@ def change():       # regarde si le client peut entrée et si oui diminue de 1 l
     
 
 
-    a = id_client
+    auxid = id_client
 
-    k="SELECT nb_visit FROM count WHERE ( id_client='"
+    sqlStr="SELECT nb_visit FROM count WHERE ( id_client='"
 
-    k = "%s%s" % (k, a)
+    sqlStr = "%s%s" % (sqlStr, auxid)
 
-    v = "')"
 
-    k = "%s%s" % (k, v)
+
+    sqlStr = "%s%s" % (sqlStr, "')")
 
 
     
-    print(k)
+    print(sqlStr)
     
-    b = db.fetchone(k)
+    recep = db.fetchone(sqlStr)
 
-    c = b[0]
-    if (c == 0):
+    nb_vis = recep[0]
+    if (nb_vis == 0):
         root = Tk()
 
         lb = Label(root, text = ' t\'as pas le droit', fg = 'red', font = ('Courrier', 30))
@@ -145,7 +139,7 @@ def change():       # regarde si le client peut entrée et si oui diminue de 1 l
 
     else :
 
-        c=c-1
+        nb_vis=nb_vis-1
 
         GPIO.output(LED, GPIO.HIGH)
 
@@ -154,33 +148,27 @@ def change():       # regarde si le client peut entrée et si oui diminue de 1 l
         GPIO.output(LED, GPIO.LOW)
 
         
-        l="UPDATE count SET nb_visit="
+        sqlStr="UPDATE count SET nb_visit="
 
-        l = "%s%s" % (l, c)
+        sqlStr = "%s%s" % (sqlStr, nb_vis)
 
-        w = " WHERE id_client='"
+        sqlStr = "%s%s" % (sqlStr, " WHERE id_client='")
 
-        l = "%s%s" % (l, w)
+        sqlStr = "%s%s" % (sqlStr, auxid)
 
-        l = "%s%s" % (l, a)
-
-        s = "' AND lieu ='"
-
-        l = "%s%s" % (l, s)
+        sqlStr = "%s%s" % (sqlStr, "' AND lieu ='")
 
         lieu = entry1.get()
 
-        l = "%s%s" % (l, lieu)
+        sqlStr= "%s%s" % (sqlStr, lieu)
 
-        r = "'"
+        sqlStr = "%s%s" % (sqlStr, "'")
 
-        l = "%s%s" % (l, r)
-
-        print(l)
+        print(sqlStr)
 
         addref()
 
-    db.execute(l)
+    db.execute(sqlStr)
 
 
 
@@ -196,18 +184,18 @@ def addref():       #reference la visite
 
     lieu = entry1.get()
 
-    al = (id_client, date, heure, lieu)
+    column = (id_client, date, heure, lieu)
 
-    k = "INSERT INTO ref_visit"
+    sqlStr = "INSERT INTO ref_visit"
 
-    e = " (id_client, date, heure, lieu) VALUES "
+    e =
 
-    k = "%s%s" % (k, e)
+    sqlStr = "%s%s" % (sqlStr, " (id_client, date, heure, lieu) VALUES ")
 
-    k = "%s%s" % (k, al)
+    sqlStr = "%s%s" % (sqlStr, column)
 
-    print(k)
-    db.execute(k)
+    print(sqlStr)
+    db.execute(sqlStr)
 
 
 
