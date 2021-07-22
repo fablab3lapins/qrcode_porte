@@ -3,51 +3,42 @@ import random
 from datetime import *
 import db
 
-
-
 ref = 0
-
-
 
 def refachat():   #creer une ref pour l'achat (annee, mois, jours, random number de 4 chiffres
     global ref
     heure = datetime.today().strftime('%H:%M')
 
     date = datetime.today().strftime('%Y-%m-%d')
+
+    ref = "%s%s%s%s" % (
+        random.randint(0, 9), 
+        random.randint(0, 9), 
+        random.randint(0, 9), 
+        random.randint(0, 9)
+    )
     
-    a, d ,e, f = random.randint(0, 9), random.randint(0, 9) , random.randint(0, 9),random.randint(0, 9)
-
-    ref = "%s%s" % (a, d)
-    ref = "%s%s" % (ref, e)
-    ref = "%s%s" % (ref, f)
-
     ref = "%s%s" % ( "-", ref)
 
     ref = "%s%s" % (date, ref)
 
     verif()
 
-    
-
-
 
 def verif():
     global ref
 
+    sql ="SELECT * FROM achat WHERE ref_achat ='"      #creer la commande sql
+
+    sql = "%s%s" % (sql, ref)
+
+
+    sql = "%s%s" % (sql, "'")
+
+    print(sql)
     
 
-    sqlStr ="SELECT * FROM achat WHERE ref_achat ='"      #creer la commande sql
-
-    sqlStr = "%s%s" % (sqlStr, ref)
-
-
-    sqlStr = "%s%s" % (sqlStr, "'")
-
-    print(sqlStr)
-    
-
-
-    recep = db.fetchone(sqlStr) #recup la ligne si elle existe sinon recup none
+    recep = db.fetchone(sql) #recup la ligne si elle existe sinon recup none
 
     print(recep)
     
@@ -62,38 +53,30 @@ def verif():
 
 
 
-
 def id():       # recuper l'id
     global id_client
 
-    sqlStr ="SELECT * FROM client WHERE ( nom='"
+    sql ="SELECT * FROM client WHERE ( nom='"
 
-    sqlStr = "%s%s" % (sqlStr, nom.get())
+    sql = "%s%s" % (sql, nom.get())
 
-    sqlStr = "%s%s" % (sqlStr, "'")
+    sql = "%s%s" % (sql, "'")
 
-    sqlStr = "%s%s" % (sqlStr, " AND prenom='")
+    sql = "%s%s" % (sql, " AND prenom='")
 
-    sqlStr = "%s%s" % (sqlStr, prenom.get())
+    sql = "%s%s" % (sql, prenom.get())
 
-    sqlStr = "%s%s" % (sqlStr, "')")
+    sql = "%s%s" % (sql, "')")
 
-    print(sqlStr)
-    
+    print(sql)
 
-    
-    
+    client = db.fetchone(sql)
 
+    print(client)
 
-    recep = db.fetchone(sqlStr)
-
-    print(recep)
-
-    id_client = recep[0]
+    id_client = client[0]
 
     print(id_client)
-
-
 
 
 
@@ -106,14 +89,14 @@ def achat():        # ajoute la ligne de l'achat avec le nb de visit , la ref de
 
     column = (int(nb.get()), ref, id_client, lieu.get())
 
-    sqtStr  = "INSERT INTO achat"
+    sql  = "INSERT INTO achat"
 
-    sqtStr = "%s%s" % (sqtStr, " (nb_visit_achat, ref_achat, id_client, lieu) VALUES ")
+    sql = "%s%s" % (sql, " (nb_visit_achat, ref_achat, id_client, lieu) VALUES ")
 
-    sqtStr = "%s%s" % (sqtStr, column)
+    sql = "%s%s" % (sql, column)
 
-    print(sqtStr)
-    db.execute(sqtStr)
+    print(sql)
+    db.execute(sql)
 
 
     upcount()
@@ -125,42 +108,40 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
     global id_client
 
     
-    sqlStr ="SELECT * FROM count WHERE id_client='"
+    sql = "SELECT * FROM count WHERE id_client='"
 
-    sqlStr = "%s%s" % (sqlStr, id_client)
+    sql = "%s%s" % (sql, id_client)
 
-    sqlStr = "%s%s" % (sqlStr, "'")
+    sql = "%s%s" % (sql, "'")
 
-    sqlStr = "%s%s" % (sqlStr, " AND lieu='")
+    sql = "%s%s" % (sql, " AND lieu='")
 
-    sqlStr = "%s%s" % (sqlStr,lieu.get())
+    sql = "%s%s" % (sql,lieu.get())
 
-    sqlStr = "%s%s" % (sqlStr, "'")
+    sql = "%s%s" % (sql, "'")
 
-    print(sqlStr)
+    print(sql)
 
-    recep = db.fetchone(sqlStr)
+    count = db.fetchone(sql)
 
-    if (recep == None):
+    if (count == None):
         pass
     else :
-        nbvisit = recep[0]
+        nbvisit = count[0]
 
-
-
-    if (recep == None):
+    if (count == None):
         print('j\'ai pas celui la')
 
 
         column = (nb.get(), id_client, lieu.get())
 
-        sqlStr = "INSERT INTO count"
+        sql = "INSERT INTO count"
 
-        sqlStr = "%s%s" % (sqlStr, " (nb_visit, id_client, lieu) VALUES ")
+        sql = "%s%s" % (sql, " (nb_visit, id_client, lieu) VALUES ")
 
-        sqlStr = "%s%s" % (sqlStr, column)
+        sql = "%s%s" % (sql, column)
 
-        db.execute(sqlStr)
+        db.execute(sql)
 
     else:
         print( ' got it ')
@@ -168,28 +149,25 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
 
         nbvis= int(nb.get()) + nbvisit
 
-        sqlStr = " UPDATE count SET nb_visit = "
+        sql = " UPDATE count SET nb_visit = "
 
-        sqlStr = "%s%s" % (sqlStr, nbvis)
+        sql = "%s%s" % (sql, nbvis)
+
+        sql = "%s%s" % (sql, " WHERE id_client ='")
+
+        sql = "%s%s" % (sql, id_client)
         
+        sql = "%s%s" % (sql, "'")
 
-        x =
+        sql = "%s%s" % (sql, " AND lieu='")
 
-        sqlStr = "%s%s" % (sqlStr, " WHERE id_client ='")
+        sql = "%s%s" % (sql, lieu.get())
 
-        sqlStr = "%s%s" % (sqlStr, id_client)
-        
-        sqlStr = "%s%s" % (sqlStr, "'")
+        sql = "%s%s" % (sql, "'")
 
-        sqlStr = "%s%s" % (sqlStr, " AND lieu='")
+        print(sql)
 
-        sqlStr = "%s%s" % (sqlStr, lieu.get())
-
-        sqlStr = "%s%s" % (sqlStr, "'")
-
-        print(sqlStr)
-
-        db.execute(sqlStr)
+        db.execute(sql)
 
 
 
@@ -201,6 +179,8 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
     label.pack(side=TOP)
 
     win.mainloop()
+
+
 
 win = Tk()
 

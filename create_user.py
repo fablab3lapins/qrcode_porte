@@ -16,18 +16,15 @@ def lettre():   #creer le qrcode
         qr_code = "%s%s" % (qr_code, aux)
 
 
-    sqlStr = "SELECT * FROM client WHERE qrcode ='"  #verif que le qrcode est unique
+    sql = "SELECT * FROM client WHERE qrcode ='"  #verif que le qrcode est unique
 
-    sqlStr = "%s%s" % (sqlStr, qr_code)
+    sql = "%s%s" % (sql, qr_code)
 
-    sqlStr = "%s%s" % (sqlStr, "'")
+    sql = "%s%s" % (sql, "'")
 
+    result = db.fetchone(sql)  # recup la ligne si elle existe sinon none
 
-
-
-    recep = db.fetchone(sqlStr)  # recup la ligne si elle existe sinon none
-
-    if (recep != None):
+    if (result != None):
         return qr_code
     else:
         lettre()
@@ -46,19 +43,15 @@ def id():       #créer un id unique
 
     id_client = "%s%s" % (id_client, c)
 
-    sqlStr = "SELECT * FROM client WHERE id_client ='"  #verif que l'id est unique
+    sql = "SELECT * FROM client WHERE id_client ='"  #verif que l'id est unique
 
-    sqlStr = "%s%s" % (sqlStr, id_client)
+    sql = "%s%s" % (sql, id_client)
 
-    sqlStr = "%s%s" % (sqlStr, "'")
+    sql = "%s%s" % (sql, "'")
 
+    result = db.fetchone(sql)
 
-
-
-
-    recep = db.fetchone(sqlStr)
-
-    if (recep != None):
+    if (result != None):
         return id_client
     else:
         id()
@@ -74,14 +67,14 @@ def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
     new_user = (id(),nom.get(),prenom.get(),mail.get(),tel.get(),adresse.get(),lettre())
 
     if (varVerif == 1):
-        sqlStr = "INSERT INTO client"        #création de la commande sql
+        sql = "INSERT INTO client"        #création de la commande sql
 
-        sqlStr = "%s%s" % (sqlStr, " (id_client, nom, prenom, mail, telephone, adresse,  qr_code) VALUES ")
+        sql = "%s%s" % (sql, " (id_client, nom, prenom, mail, telephone, adresse,  qr_code) VALUES ")
 
-        sqlStr = "%s%s" % (sqlStr, new_user)
+        sql = "%s%s" % (sql, new_user)
 
-        print(sqlStr)
-        db.execute(sqlStr)
+        print(sql)
+        db.execute(sql)
 
         
 
@@ -109,21 +102,18 @@ def mailverif():  #verif que le mail n'existe pas et que le client n'a pas été
     global varVerif
 
 
-    sqlStr ="SELECT * FROM client WHERE mail='"
+    sql ="SELECT * FROM client WHERE mail='"
 
-    sqlStr = "%s%s" % (sqlStr ,mail.get())
+    sql = "%s%s" % (sql ,mail.get())
 
-    sqlStr = "%s%s" % (sqlStr, "'")
+    sql = "%s%s" % (sql, "'")
 
-
-
-
-    recep = db.fetchone(sqlStr)
-    print(sqlStr)
+    result = db.fetchone(sql)
+    print(sql)
     
 
 
-    if (recep == None):
+    if (result == None):
         varVerif = 1
     else:
         varVerif = 0
@@ -131,26 +121,24 @@ def mailverif():  #verif que le mail n'existe pas et que le client n'a pas été
 
 def save():     # enrigstre le qrcode dans un dossier (nom de l'image compose du nom prenom et id)
 
-    sqlStr ="SELECT * FROM client WHERE mail='"
+    sql ="SELECT * FROM client WHERE mail='"
 
-    sqlStr = "%s%s" % (sqlStr ,mail.get())
+    sql = "%s%s" % (sql ,mail.get())
 
-    sqlStr = "%s%s" % (sqlStr, "'")
-
-    
+    sql = "%s%s" % (sql, "'")
 
 
-    recep = db.fetchone(sqlStr)
+    result = db.fetchone(sql)
 
-    print(recep)
+    print(result)
 
-    name = recep[1]
+    name = result[1]
 
-    surname = recep[2]
+    surname = result[2]
 
-    id_user = recep[0]
+    id_user = result[0]
 
-    qr_code = recep[6]
+    qr_code = result[6]
 
     qr = qrcode.QRCode(version=3, error_correction=qrcode.constants.ERROR_CORRECT_L,
                        box_size=10, border=4)
@@ -169,11 +157,6 @@ def save():     # enrigstre le qrcode dans un dossier (nom de l'image compose du
     imgq = "%s%s" % (imgq,id_user)
 
     imgq = "%s%s" % (imgq,".png")
-
-    
-
-    
-
     img.save(imgq)
                        
 
