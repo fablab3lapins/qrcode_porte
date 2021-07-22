@@ -3,247 +3,167 @@ import random
 from datetime import *
 import db
 
-
-
-a = 0
-
-
+ref = 0
 
 def refachat():   #creer une ref pour l'achat (annee, mois, jours, random number de 4 chiffres
-
-    global a
-
-    
     heure = datetime.today().strftime('%H:%M')
 
     date = datetime.today().strftime('%Y-%m-%d')
+
+    ref = "%s%s%s%s" % (
+        random.randint(0, 9), 
+        random.randint(0, 9), 
+        random.randint(0, 9), 
+        random.randint(0, 9)
+    )
     
-    a, d ,e, f = random.randint(0, 9), random.randint(0, 9) , random.randint(0, 9),random.randint(0, 9)
+    ref = "%s%s" % ( "-", ref)
 
-    a = "%s%s" % (a, d)
-    a = "%s%s" % (a, e)
-    a = "%s%s" % (a, f)
+    ref = "%s%s" % (date, ref)
 
-    b= "-"
-    a = "%s%s" % ( b, a)
-
-    a = "%s%s" % (date, a)
-
-    verif()
-
-    
+    verif(ref)
 
 
+def verif(ref):
 
-def verif():
-    global a
+    sql ="SELECT * FROM achat WHERE ref_achat ='"      #creer la commande sql
 
-    
+    sql = "%s%s" % (sql, ref)
 
-    k="SELECT * FROM achat WHERE ref_achat ='"      #creer la commande sql 
 
-    k = "%s%s" % (k, a)
+    sql = "%s%s" % (sql, "'")
 
-    v = "'"
-    
-    k = "%s%s" % (k, v)
-
-    print(k)
+    print(sql)
     
 
+    recep = db.fetchone(sql) #recup la ligne si elle existe sinon recup none
 
-    b = db.fetchone(k) #recup la ligne si elle existe sinon recup none
-
-    print(b)
+    print(recep)
     
 
-    if (b == None):
+    if (recep == None):
         print('j\'ai pas celui la')
-        id()
-        achat()
+        id_client = id()
+        achat(id_client, ref)
+
         
     else :
         print( ' got it ')
-
 
 
 
 def id():       # recuper l'id
-    global id_client
-    
-    nm = nom.get()
 
-    pm= prenom.get()
+    sql ="SELECT * FROM client WHERE ( nom='"
 
-    
+    sql = "%s%s" % (sql, nom.get())
 
-    k="SELECT * FROM client WHERE ( nom='"
+    sql = "%s%s" % (sql, "'")
 
-    k = "%s%s" % (k, nm)
+    sql = "%s%s" % (sql, " AND prenom='")
 
-    v = "'"
+    sql = "%s%s" % (sql, prenom.get())
 
-    g = " AND prenom='"
+    sql = "%s%s" % (sql, "')")
 
-    w = "')"
+    print(sql)
 
-    k = "%s%s" % (k, v)
+    client = db.fetchone(sql)
 
-    k = "%s%s" % (k, g)
+    print(client)
 
-    k = "%s%s" % (k, pm)
-
-    k = "%s%s" % (k, w)
-
-    print(k)
-    
-
-    
-    
-
-
-    b = db.fetchone(k)
-
-    print(b)
-
-    id_client = b[0]
+    id_client = client[0]
 
     print(id_client)
 
+    return id_client
 
+def achat(id_client, ref):        # ajoute la ligne de l'achat avec le nb de visit , la ref de l'achat, l'id et le lieu
 
-
-
-def achat():        # ajoute la ligne de l'achat avec le nb de visit , la ref de l'achat, l'id et le lieu
-    global id_client
-
-    global a
-
-
-    nbvis = int(nb.get())
-
-    li = lieu.get()
-
-    
 
     date = datetime.today().strftime('%Y-%m-%d')
-    
+
+    column = (int(nb.get()), ref, id_client, lieu.get())
+
+    sql  = "INSERT INTO achat"
+
+    sql = "%s%s" % (sql, " (nb_visit_achat, ref_achat, id_client, lieu) VALUES ")
+
+    sql = "%s%s" % (sql, column)
+
+    print(sql)
+    db.execute(sql)
 
 
-    al = (nbvis, a, id_client, li)
-
-    k = "INSERT INTO achat"
-
-    e = " (nb_visit_achat, ref_achat, id_client, lieu) VALUES "
-
-    k = "%s%s" % (k, e)
-
-    k = "%s%s" % (k, al)
-
-    print(k)
-    db.execute(k)
-
-
-    upcount()
+    upcount(id_client)
 
 
 
 
-def upcount():      # met a jour si le client a deja effectuer un achat dans le lieu sinon créer la ligne
-    global id_client
+def upcount(id_client):      # met a jour si le client a deja effectuer un achat dans le lieu sinon créer la ligne
+
 
     
-    k="SELECT * FROM count WHERE id_client='"
+    sql = "SELECT * FROM count WHERE id_client='"
 
-    k = "%s%s" % (k, id_client)
+    sql = "%s%s" % (sql, id_client)
 
-    v = "'"
+    sql = "%s%s" % (sql, "'")
 
-    g = " AND lieu='"
-    
-    k = "%s%s" % (k, v)
+    sql = "%s%s" % (sql, " AND lieu='")
 
-    k = "%s%s" % (k, g)
+    sql = "%s%s" % (sql,lieu.get())
 
-    li = lieu.get()
+    sql = "%s%s" % (sql, "'")
 
-    k = "%s%s" % (k, li)
+    print(sql)
 
-    k = "%s%s" % (k, v)
+    count = db.fetchone(sql)
 
-    
-
-    
-
-    print(k)
-
-    b = db.fetchone(k)
-
-    if (b == None):
-        truc = 0
+    if (count == None):
+        pass
     else :
-        c = b[0]
+        nbvisit = count[0]
 
-
-
-    if (b == None):
+    if (count == None):
         print('j\'ai pas celui la')
 
-        nbvis = nb.get()
 
-        li = lieu.get()
+        column = (nb.get(), id_client, lieu.get())
 
-        al = (nbvis, id_client, li)
+        sql = "INSERT INTO count"
 
-        k = "INSERT INTO count"
+        sql = "%s%s" % (sql, " (nb_visit, id_client, lieu) VALUES ")
 
-        e = " (nb_visit, id_client, lieu) VALUES "
+        sql = "%s%s" % (sql, column)
 
-        k = "%s%s" % (k, e)
+        db.execute(sql)
 
-        k = "%s%s" % (k, al)
-
-
-        db.execute(k)
-
-
-            
-        
-    else :
+    else:
         print( ' got it ')
 
 
-        nbvis= int(nb.get()) + c
-        v = "'"
+        nbvis= int(nb.get()) + nbvisit
 
-        k = " UPDATE count SET nb_visit = "
+        sql = " UPDATE count SET nb_visit = "
 
-        k = "%s%s" % (k, nbvis)
+        sql = "%s%s" % (sql, nbvis)
+
+        sql = "%s%s" % (sql, " WHERE id_client ='")
+
+        sql = "%s%s" % (sql, id_client)
         
+        sql = "%s%s" % (sql, "'")
 
-        x = " WHERE id_client ='"
+        sql = "%s%s" % (sql, " AND lieu='")
 
-        k = "%s%s" % (k, x)
+        sql = "%s%s" % (sql, lieu.get())
 
-        k = "%s%s" % (k, id_client)
+        sql = "%s%s" % (sql, "'")
 
-        
+        print(sql)
 
-        g = " AND lieu='"
-        
-        k = "%s%s" % (k, v)
-
-        k = "%s%s" % (k, g)
-
-        li = lieu.get()
-
-        k = "%s%s" % (k, li)
-
-        k = "%s%s" % (k, v)
-
-        print(k)
-
-        db.execute(k)
+        db.execute(sql)
 
 
 
@@ -256,23 +176,11 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
 
     win.mainloop()
 
-        
-
-
-            
-
-
-        
-
-    
-
-
-
 
 
 win = Tk()
 
-win.title("La tirelire magique ")
+win.title("faire un achat")
 win.geometry("800x600")
 win.config(background='#00ffe0')
 

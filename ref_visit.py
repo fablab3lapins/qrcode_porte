@@ -15,11 +15,8 @@ camera.resolution = (1024, 768)
 id_client = ""
 
 GPIO.setmode(GPIO.BCM)
-
 LED = 21
-
 GPIO.setup(LED, GPIO.OUT)
-
 
 
 def scan(): #scan le qrcode en enregistre la valeur lu
@@ -35,12 +32,9 @@ def scan(): #scan le qrcode en enregistre la valeur lu
 
     img = cv2.imread("/home/pi/Documents/qrcoed.jpeg")
 
-    
-
     detector = cv2.QRCodeDetector()
     swpr = False
 
-    global data
     while True:   
         
         data, box, _ = detector.detectAndDecode(img)
@@ -58,84 +52,59 @@ def scan(): #scan le qrcode en enregistre la valeur lu
         cv2.imshow("code detector" , img)
         sleep(0.1)
         cv2.destroyAllWindows()
-        test()
+        test(data, id_client)
         break
 
 
-        
-
-        if cv2.waitKey(1) == ord("q"):
-            break
+def test(data, id_client):     # regarde si le qrcode existe
 
     
+    auxdata = data
 
+    sql="SELECT * FROM client WHERE ( qr_code='"  # creation de la commande sql
 
+    sql = "%s%s" % (sql, auxdata)
 
+    sql = "%s%s" % (sql, "')")
 
+    print(sql)
 
-def test():     # regarde si le qrcode existe
-    global data
-    global id_client
-    
-    a = data
-    print(a)
+    qrcode = db.fetchone(sql)
 
-    k="SELECT * FROM client WHERE ( qr_code='"  # creation de la commande sql
+    print(qrcode)
 
-    k = "%s%s" % (k, a)
-
-    v = "')"
-
-    k = "%s%s" % (k, v)
-
-    print(k)
-    
-
-
-    b = db.fetchone(k)
-
-    print(b)
-
-    id_client = b[0] #recup la premieere colonne de la ligne
+    id_client = qrcode[0] #recup la premieere colonne de la ligne
 
     print(id_client)
     
 
-    if (b == None):
+    if (qrcode == None):
         print('j\'ai pas celui la')
-        
         
 
     else :
         print( ' got it ')
-        change()
+        change(data, id_client)
 
 
 
-def change():       # regarde si le client peut entrée et si oui diminue de 1 le nombre d'entrée
-    global data
-    global id_client
+def change(data, id_client):       # regarde si le client peut entrée et si oui diminue de 1 le nombre d'entrée
+
+    auxid = id_client
+
+    sql="SELECT nb_visit FROM count WHERE ( id_client='"
+
+    sql = "%s%s" % (sql, auxid)
+
+
+
+    sql = "%s%s" % (sql, "')")
+    print(sql)
     
+    visit = db.fetchone(sql)
 
-
-    a = id_client
-
-    k="SELECT nb_visit FROM count WHERE ( id_client='"
-
-    k = "%s%s" % (k, a)
-
-    v = "')"
-
-    k = "%s%s" % (k, v)
-
-
-    
-    print(k)
-    
-    b = db.fetchone(k)
-
-    c = b[0]
-    if (c == 0):
+    nb_vis = visit[0]
+    if (nb_vis == 0):
         root = Tk()
 
         lb = Label(root, text = ' t\'as pas le droit', fg = 'red', font = ('Courrier', 30))
@@ -145,7 +114,7 @@ def change():       # regarde si le client peut entrée et si oui diminue de 1 l
 
     else :
 
-        c=c-1
+        nb_vis=nb_vis-1
 
         GPIO.output(LED, GPIO.HIGH)
 
@@ -153,42 +122,31 @@ def change():       # regarde si le client peut entrée et si oui diminue de 1 l
 
         GPIO.output(LED, GPIO.LOW)
 
-        
-        l="UPDATE count SET nb_visit="
+        sql="UPDATE count SET nb_visit="
 
-        l = "%s%s" % (l, c)
+        sql = "%s%s" % (sql, nb_vis)
 
-        w = " WHERE id_client='"
+        sql = "%s%s" % (sql, " WHERE id_client='")
 
-        l = "%s%s" % (l, w)
+        sql = "%s%s" % (sql, auxid)
 
-        l = "%s%s" % (l, a)
-
-        s = "' AND lieu ='"
-
-        l = "%s%s" % (l, s)
+        sql = "%s%s" % (sql, "' AND lieu ='")
 
         lieu = entry1.get()
 
-        l = "%s%s" % (l, lieu)
+        sql= "%s%s" % (sql, lieu)
 
-        r = "'"
+        sql = "%s%s" % (sql, "'")
 
-        l = "%s%s" % (l, r)
+        print(sql)
 
-        print(l)
+        addref(id_client)
 
-        addref()
-
-    db.execute(l)
+    db.execute(sql)
 
 
 
-
-
-def addref():       #reference la visite 
-    global id_client
-
+def addref(id_client):       #reference la visite
 
     heure = datetime.today().strftime('%H:%M')
 
@@ -196,18 +154,16 @@ def addref():       #reference la visite
 
     lieu = entry1.get()
 
-    al = (id_client, date, heure, lieu)
+    column = (id_client, date, heure, lieu)
 
-    k = "INSERT INTO ref_visit"
+    sql = "INSERT INTO ref_visit"
 
-    e = " (id_client, date, heure, lieu) VALUES "
+    sql = "%s%s" % (sql, " (id_client, date, heure, lieu) VALUES ")
 
-    k = "%s%s" % (k, e)
+    sql = "%s%s" % (sql, column)
 
-    k = "%s%s" % (k, al)
-
-    print(k)
-    db.execute(k)
+    print(sql)
+    db.execute(sql)
 
 
 
