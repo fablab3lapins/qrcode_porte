@@ -1,8 +1,8 @@
 from tkinter import *
 import qrcode
-
 import random
-import MySQLdb
+import db
+
 
 vr=0
 
@@ -24,13 +24,10 @@ def lettre():   #creer le qrcode
 
     f = "%s%s" % (f, b)
 
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
-    cursor.execute(f) 
 
-    m = cursor.fetchone  # recup la ligne si elle existe sinon none
+    m = db.fetchone(f)  # recup la ligne si elle existe sinon none
 
     if (m!= None):
         return k
@@ -59,13 +56,11 @@ def id():       #créer un id unique
 
     f = "%s%s" % (f, b)
 
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
-    cursor.execute(f)
 
-    m = cursor.fetchone
+
+    m = db.fetchone(f)
 
     if (m!= None):
         return a
@@ -80,9 +75,7 @@ def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
 
     mailverif()
     
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()    #recuperation des entrée
     b= lettre()
     a = nom.get()
     c = mail.get()
@@ -104,7 +97,7 @@ def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
         k = "%s%s" % (k, new_user)
 
         print(k)
-        cursor.execute(k)
+        db.execute(k)
 
         
 
@@ -123,10 +116,7 @@ def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
         label2.pack(side=TOP)"""
 
         win.mainloop()
-                
-    connection.commit()
 
-    connection.close()
 
     if (vr == 1):
         save()
@@ -143,17 +133,13 @@ def mailverif():  #verif que le mail n'existe pas et que le client n'a pas été
 
     k = "%s%s" % (k, e)
 
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
-    cursor.execute(k)
 
-    b = cursor.fetchone()
+
+    b = db.fetchone(k)
     print(k)
     
-    connection.commit()
 
-    connection.close()
 
     if (b == None):
         vr = 1
@@ -173,13 +159,9 @@ def save():     # enrigstre le qrcode dans un dossier (nom de l'image compose du
     k = "%s%s" % (k, e)
 
     
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
-    cursor.execute(k)
-
-    b = cursor.fetchone()
+    b = db.fetchone(k)
 
     print(b)
 
@@ -192,9 +174,7 @@ def save():     # enrigstre le qrcode dans un dossier (nom de l'image compose du
     q = b[6]
     
     
-    connection.commit()
 
-    connection.close()
     
 
 
@@ -209,7 +189,7 @@ def save():     # enrigstre le qrcode dans un dossier (nom de l'image compose du
 
     img = qr.make_image(fill_color="black", back_color="#FFD800")
 
-    k='/home/pi/qrcode_porte/qrcode_list/'
+    k='qrcode_list/'
 
     k = "%s%s" % (k,a)
     k = "%s%s" % (k,c)

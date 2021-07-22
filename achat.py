@@ -1,11 +1,12 @@
 from tkinter import *
-
 import random
-import MySQLdb
 from datetime import *
+import db
 
 
-global a
+
+a = 0
+
 
 
 def refachat():   #creer une ref pour l'achat (annee, mois, jours, random number de 4 chiffres
@@ -49,13 +50,9 @@ def verif():
 
     print(k)
     
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
-    cursor.execute(k)
-
-    b = cursor.fetchone() #recup la ligne si elle existe sinon recup none
+    b = db.fetchone(k) #recup la ligne si elle existe sinon recup none
 
     print(b)
     
@@ -68,9 +65,7 @@ def verif():
     else :
         print( ' got it ')
 
-    connection.commit()
 
-    connection.close()
 
 
 def id():       # recuper l'id
@@ -105,13 +100,9 @@ def id():       # recuper l'id
 
     
     
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
-    cursor.execute(k)
-
-    b = cursor.fetchone()
+    b = db.fetchone(k)
 
     print(b)
 
@@ -119,9 +110,7 @@ def id():       # recuper l'id
 
     print(id_client)
 
-    connection.commit()
 
-    connection.close()
 
 
 
@@ -129,9 +118,7 @@ def achat():        # ajoute la ligne de l'achat avec le nb de visit , la ref de
     global id_client
 
     global a
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
     nbvis = int(nb.get())
 
@@ -154,10 +141,8 @@ def achat():        # ajoute la ligne de l'achat avec le nb de visit , la ref de
     k = "%s%s" % (k, al)
 
     print(k)
-    cursor.execute(k)
-    connection.commit()
+    db.execute(k)
 
-    connection.close()
 
     upcount()
 
@@ -191,24 +176,15 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
     
 
     print(k)
-    
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
-
-    cursor.execute(k)
-
-    b = cursor.fetchone()
+    b = db.fetchone(k)
 
     if (b == None):
         truc = 0
     else :
         c = b[0]
 
-    connection.commit()
 
-    connection.close()
-    
 
     if (b == None):
         print('j\'ai pas celui la')
@@ -228,16 +204,9 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
         k = "%s%s" % (k, al)
 
 
-        connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+        db.execute(k)
 
-        cursor = connection.cursor()
 
-        cursor.execute(k)
-
-        connection.commit()
-
-        connection.close()
-    
             
         
     else :
@@ -274,15 +243,9 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
 
         print(k)
 
-        connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
+        db.execute(k)
 
-        cursor = connection.cursor()
 
-        cursor.execute(k)
-
-        connection.commit()
-
-        connection.close()
 
     win = Tk()
 
