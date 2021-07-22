@@ -1,48 +1,10 @@
 from tkinter import *
 import qrcode
-import json
 import random
-import MySQLdb
+import db
 
-txt = json.loads()
-
-iphost = txt["iphost"]
-
-hostname = txt["hostname"]
-
-password = txt["password"]
-
-database = txt["database_name"]
 
 vr=0
-
-
-def execute(k):
-    connection = MySQLdb.connect(iphost, hostname, password, database)
-
-    cursor = connection.cursor()
-
-    cursor.execute(k)
-
-    connection.commit()
-
-    connection.close()
-
-
-def fetch(k):
-    connection = MySQLdb.connect(iphost, hostname, password, database)
-
-    cursor = connection.cursor()
-
-    cursor.execute(k)
-
-    b = cursor.fetchone()
-
-    connection.commit()
-
-    connection.close()
-
-    return b
 
 
 def lettre():   #creer le qrcode    
@@ -65,7 +27,7 @@ def lettre():   #creer le qrcode
 
 
 
-    m = fetch(f)  # recup la ligne si elle existe sinon none
+    m = db.fetchone(f)  # recup la ligne si elle existe sinon none
 
     if (m!= None):
         return k
@@ -98,7 +60,7 @@ def id():       #créer un id unique
 
 
 
-    m = fetch(f)
+    m = db.fetchone(f)
 
     if (m!= None):
         return a
@@ -135,7 +97,7 @@ def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
         k = "%s%s" % (k, new_user)
 
         print(k)
-        execute(k)
+        db.execute(k)
 
         
 
@@ -174,7 +136,7 @@ def mailverif():  #verif que le mail n'existe pas et que le client n'a pas été
 
 
 
-    b = fetch(k)
+    b = db.fetchone(k)
     print(k)
     
 
@@ -199,7 +161,7 @@ def save():     # enrigstre le qrcode dans un dossier (nom de l'image compose du
     
 
 
-    b = fetch(k)
+    b = db.fetchone(k)
 
     print(b)
 

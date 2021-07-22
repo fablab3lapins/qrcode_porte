@@ -1,48 +1,13 @@
 from tkinter import *
-import json
 import random
-import MySQLdb
 from datetime import *
+import db
 
-txt = json.loads()
-
-iphost = txt["iphost"]
-
-hostname = txt["hostname"]
-
-password = txt["password"]
-
-database = txt["database_name"]
 
 
 a = 0
 
-def execute(k):
-    connection = MySQLdb.connect(iphost, hostname, password, database)
 
-    cursor = connection.cursor()
-
-    cursor.execute(k)
-
-    connection.commit()
-
-    connection.close()
-
-
-def fetch(k):
-    connection = MySQLdb.connect(iphost, hostname, password, database)
-
-    cursor = connection.cursor()
-
-    cursor.execute(k)
-
-    b = cursor.fetchone()
-
-    connection.commit()
-
-    connection.close()
-
-    return b
 
 def refachat():   #creer une ref pour l'achat (annee, mois, jours, random number de 4 chiffres
 
@@ -87,7 +52,7 @@ def verif():
     
 
 
-    b = fetch(k) #recup la ligne si elle existe sinon recup none
+    b = db.fetchone(k) #recup la ligne si elle existe sinon recup none
 
     print(b)
     
@@ -137,7 +102,7 @@ def id():       # recuper l'id
     
 
 
-    b = fetch(k)
+    b = db.fetchone(k)
 
     print(b)
 
@@ -176,7 +141,7 @@ def achat():        # ajoute la ligne de l'achat avec le nb de visit , la ref de
     k = "%s%s" % (k, al)
 
     print(k)
-    execute(k)
+    db.execute(k)
 
 
     upcount()
@@ -212,7 +177,7 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
 
     print(k)
 
-    b = fetch(k)
+    b = db.fetchone(k)
 
     if (b == None):
         truc = 0
@@ -239,7 +204,7 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
         k = "%s%s" % (k, al)
 
 
-        execute(k)
+        db.execute(k)
 
 
             
@@ -278,7 +243,7 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
 
         print(k)
 
-        execute(k)
+        db.execute(k)
 
 
 

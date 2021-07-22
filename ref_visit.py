@@ -2,21 +2,9 @@ import cv2
 from time import sleep
 from picamera import PiCamera
 from tkinter import *
-import json
-import MySQLdb
 from datetime import *
 import RPi.GPIO as GPIO
-
-txt = json.loads()
-
-iphost = txt["iphost"]
-
-hostname = txt["hostname"]
-
-password = txt["password"]
-
-database = txt["database_name"]
-
+import db
 
 #lieu = "a definir"  selon le lieu ou il sera placé
 data=""
@@ -32,33 +20,6 @@ LED = 21
 
 GPIO.setup(LED, GPIO.OUT)
 
-
-def execute(k):
-    connection = MySQLdb.connect(iphost, hostname, password, database)
-
-    cursor = connection.cursor()
-
-    cursor.execute(k)
-
-    connection.commit()
-
-    connection.close()
-
-
-def fetch(k):
-    connection = MySQLdb.connect(iphost, hostname, password, database)
-
-    cursor = connection.cursor()
-
-    cursor.execute(k)
-
-    b = cursor.fetchone()
-
-    connection.commit()
-
-    connection.close()
-
-    return b
 
 
 def scan(): #scan le qrcode en enregistre la valeur lu
@@ -131,7 +92,7 @@ def test():     # regarde si le qrcode existe
     
 
 
-    b =fetch(k)
+    b = db.fetchone(k)
 
     print(b)
 
@@ -171,7 +132,7 @@ def change():       # regarde si le client peut entrée et si oui diminue de 1 l
     
     print(k)
     
-    b = fetch(k)
+    b = db.fetchone(k)
 
     c = b[0]
     if (c == 0):
@@ -219,7 +180,7 @@ def change():       # regarde si le client peut entrée et si oui diminue de 1 l
 
         addref()
 
-    execute(l)
+    db.execute(l)
 
 
 
@@ -246,18 +207,7 @@ def addref():       #reference la visite
     k = "%s%s" % (k, al)
 
     print(k)
-    execute(k)
-
-
-
-
-    
-
-    
-
-
-    
-
+    db.execute(k)
 
 
 
