@@ -12,9 +12,37 @@ hostname = txt["hostname"]
 
 password = txt["password"]
 
-database = txt["database name"]
+database = txt["database_name"]
 
 vr=0
+
+
+def execute(k):
+    connection = MySQLdb.connect(iphost, hostname, password, database)
+
+    cursor = connection.cursor()
+
+    cursor.execute(k)
+
+    connection.commit()
+
+    connection.close()
+
+
+def fetch(k):
+    connection = MySQLdb.connect(iphost, hostname, password, database)
+
+    cursor = connection.cursor()
+
+    cursor.execute(k)
+
+    b = cursor.fetchone()
+
+    connection.commit()
+
+    connection.close()
+
+    return b
 
 
 def lettre():   #creer le qrcode    
@@ -34,13 +62,10 @@ def lettre():   #creer le qrcode
 
     f = "%s%s" % (f, b)
 
-    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
-    cursor.execute(f) 
 
-    m = cursor.fetchone  # recup la ligne si elle existe sinon none
+    m = fetch(f)  # recup la ligne si elle existe sinon none
 
     if (m!= None):
         return k
@@ -69,13 +94,11 @@ def id():       #créer un id unique
 
     f = "%s%s" % (f, b)
 
-    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
-    cursor.execute(f)
 
-    m = cursor.fetchone
+
+    m = fetch(f)
 
     if (m!= None):
         return a
@@ -90,9 +113,7 @@ def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
 
     mailverif()
     
-    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()    #recuperation des entrée
     b= lettre()
     a = nom.get()
     c = mail.get()
@@ -114,7 +135,7 @@ def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
         k = "%s%s" % (k, new_user)
 
         print(k)
-        cursor.execute(k)
+        execute(k)
 
         
 
@@ -133,10 +154,7 @@ def edit():   # ajoute un ligne avec les coordonnées de l'utilisateur
         label2.pack(side=TOP)"""
 
         win.mainloop()
-                
-    connection.commit()
 
-    connection.close()
 
     if (vr == 1):
         save()
@@ -153,17 +171,13 @@ def mailverif():  #verif que le mail n'existe pas et que le client n'a pas été
 
     k = "%s%s" % (k, e)
 
-    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
-    cursor.execute(k)
 
-    b = cursor.fetchone()
+
+    b = fetch(k)
     print(k)
     
-    connection.commit()
 
-    connection.close()
 
     if (b == None):
         vr = 1
@@ -183,13 +197,9 @@ def save():     # enrigstre le qrcode dans un dossier (nom de l'image compose du
     k = "%s%s" % (k, e)
 
     
-    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
-    cursor.execute(k)
-
-    b = cursor.fetchone()
+    b = fetch(k)
 
     print(b)
 
@@ -202,9 +212,7 @@ def save():     # enrigstre le qrcode dans un dossier (nom de l'image compose du
     q = b[6]
     
     
-    connection.commit()
 
-    connection.close()
     
 
 

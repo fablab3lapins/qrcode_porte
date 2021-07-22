@@ -12,11 +12,37 @@ hostname = txt["hostname"]
 
 password = txt["password"]
 
-database = txt["database name"]
+database = txt["database_name"]
 
 
 a = 0
 
+def execute(k):
+    connection = MySQLdb.connect(iphost, hostname, password, database)
+
+    cursor = connection.cursor()
+
+    cursor.execute(k)
+
+    connection.commit()
+
+    connection.close()
+
+
+def fetch(k):
+    connection = MySQLdb.connect(iphost, hostname, password, database)
+
+    cursor = connection.cursor()
+
+    cursor.execute(k)
+
+    b = cursor.fetchone()
+
+    connection.commit()
+
+    connection.close()
+
+    return b
 
 def refachat():   #creer une ref pour l'achat (annee, mois, jours, random number de 4 chiffres
 
@@ -59,13 +85,9 @@ def verif():
 
     print(k)
     
-    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
-    cursor.execute(k)
-
-    b = cursor.fetchone() #recup la ligne si elle existe sinon recup none
+    b = fetch(k) #recup la ligne si elle existe sinon recup none
 
     print(b)
     
@@ -78,9 +100,7 @@ def verif():
     else :
         print( ' got it ')
 
-    connection.commit()
 
-    connection.close()
 
 
 def id():       # recuper l'id
@@ -115,13 +135,9 @@ def id():       # recuper l'id
 
     
     
-    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
-    cursor.execute(k)
-
-    b = cursor.fetchone()
+    b = fetch(k)
 
     print(b)
 
@@ -129,9 +145,7 @@ def id():       # recuper l'id
 
     print(id_client)
 
-    connection.commit()
 
-    connection.close()
 
 
 
@@ -139,9 +153,7 @@ def achat():        # ajoute la ligne de l'achat avec le nb de visit , la ref de
     global id_client
 
     global a
-    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
     nbvis = int(nb.get())
 
@@ -164,10 +176,8 @@ def achat():        # ajoute la ligne de l'achat avec le nb de visit , la ref de
     k = "%s%s" % (k, al)
 
     print(k)
-    cursor.execute(k)
-    connection.commit()
+    execute(k)
 
-    connection.close()
 
     upcount()
 
@@ -201,24 +211,15 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
     
 
     print(k)
-    
-    connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
-
-    cursor.execute(k)
-
-    b = cursor.fetchone()
+    b = fetch(k)
 
     if (b == None):
         truc = 0
     else :
         c = b[0]
 
-    connection.commit()
 
-    connection.close()
-    
 
     if (b == None):
         print('j\'ai pas celui la')
@@ -238,16 +239,9 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
         k = "%s%s" % (k, al)
 
 
-        connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
+        execute(k)
 
-        cursor = connection.cursor()
 
-        cursor.execute(k)
-
-        connection.commit()
-
-        connection.close()
-    
             
         
     else :
@@ -284,15 +278,9 @@ def upcount():      # met a jour si le client a deja effectuer un achat dans le 
 
         print(k)
 
-        connection = MySQLdb.connect("192.168.0.15","admin","fablab70300","set_client")
+        execute(k)
 
-        cursor = connection.cursor()
 
-        cursor.execute(k)
-
-        connection.commit()
-
-        connection.close()
 
     win = Tk()
 

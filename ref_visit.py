@@ -15,9 +15,7 @@ hostname = txt["hostname"]
 
 password = txt["password"]
 
-database = txt["database name"]
-
-
+database = txt["database_name"]
 
 
 #lieu = "a definir"  selon le lieu ou il sera placé
@@ -33,6 +31,34 @@ GPIO.setmode(GPIO.BCM)
 LED = 21
 
 GPIO.setup(LED, GPIO.OUT)
+
+
+def execute(k):
+    connection = MySQLdb.connect(iphost, hostname, password, database)
+
+    cursor = connection.cursor()
+
+    cursor.execute(k)
+
+    connection.commit()
+
+    connection.close()
+
+
+def fetch(k):
+    connection = MySQLdb.connect(iphost, hostname, password, database)
+
+    cursor = connection.cursor()
+
+    cursor.execute(k)
+
+    b = cursor.fetchone()
+
+    connection.commit()
+
+    connection.close()
+
+    return b
 
 
 def scan(): #scan le qrcode en enregistre la valeur lu
@@ -103,13 +129,9 @@ def test():     # regarde si le qrcode existe
 
     print(k)
     
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
-    cursor.execute(k)
-
-    b = cursor.fetchone() # recup la ligne
+    b =fetch(k)
 
     print(b)
 
@@ -127,19 +149,13 @@ def test():     # regarde si le qrcode existe
         print( ' got it ')
         change()
 
-    connection.commit()
-
-    connection.close()
-
 
 
 def change():       # regarde si le client peut entrée et si oui diminue de 1 le nombre d'entrée
     global data
     global id_client
     
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
 
-    cursor = connection.cursor()
 
     a = id_client
 
@@ -151,11 +167,11 @@ def change():       # regarde si le client peut entrée et si oui diminue de 1 l
 
     k = "%s%s" % (k, v)
 
-    cursor.execute(k)
+
     
     print(k)
     
-    b = cursor.fetchone()
+    b = fetch(k)
 
     c = b[0]
     if (c == 0):
@@ -203,20 +219,15 @@ def change():       # regarde si le client peut entrée et si oui diminue de 1 l
 
         addref()
 
-    cursor.execute(l)
-    
-    connection.commit()
+    execute(l)
 
-    connection.close()
+
 
 
 
 def addref():       #reference la visite 
     global id_client
 
-    connection = MySQLdb.connect("localhost","admin","fablab70300","set_client")
-
-    cursor = connection.cursor()
 
     heure = datetime.today().strftime('%H:%M')
 
@@ -235,10 +246,10 @@ def addref():       #reference la visite
     k = "%s%s" % (k, al)
 
     print(k)
-    cursor.execute(k)
-    connection.commit()
+    execute(k)
 
-    connection.close()
+
+
 
     
 
